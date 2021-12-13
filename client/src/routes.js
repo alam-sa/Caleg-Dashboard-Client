@@ -20,8 +20,8 @@ const routes = (isLoggedIn) => [
     ) : <Navigate to="/login" />,
     children: [
       { path: '/dashboard', element: <Home /> },
-      { path: '/partai', element: <DaftarCaleg /> },
-      { path: '/caleg', element: <DaftarBacaleg /> },
+      { path: '/bacaleg', element: <DaftarBacaleg /> },
+      { path: '/caleg', element: <DaftarCaleg /> },
       { path: '/data', element: <DetailCalon /> },
       { path: '/', element: <Navigate to="/dashboard" /> },
     ],

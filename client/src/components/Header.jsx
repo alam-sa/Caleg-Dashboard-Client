@@ -18,7 +18,7 @@ const Header = () => {
                 <a className="nav-link" data-widget="pushmenu" href="#" role="button"><i className="fas fa-bars" /></a>
                 </li>
                 <li className="nav-item d-none d-sm-inline-block">
-                <Link to="/dashboard" className="nav-link">Dashboard KPU</Link>
+                <Link to="/dashboard" className="nav-link">Dashboard</Link>
                 </li>
             </ul>
             {/* Right navbar links */}

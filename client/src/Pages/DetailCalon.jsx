@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { NavLink } from 'react-router-dom'
 import Berkas from '../components/Berkas'
 import ProfilCalon from '../components/ProfilCalon'
-import { getCalegLogin } from '../store/action'
+import { getCalegLogin, getDokumen } from '../store/action'
 
 const DetailCalon = () => {
 
@@ -70,9 +70,6 @@ const DetailCalon = () => {
                                     <div className="tab-pane fade" id="documents" role="tabpanel" aria-labelledby="documents-tab">
                                       <Berkas 
                                         caleg={caleg}
-                                        dapil={dapil}
-                                        parpol={parpol}
-                                        loading={loading}
                                       />
                                     </div>
                                 </div>

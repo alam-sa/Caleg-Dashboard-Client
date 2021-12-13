@@ -1,7 +1,24 @@
-import React from 'react'
+import React, { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, NavLink } from 'react-router-dom'
+import { getCalegLogin, getDapils, getParpols, getUserRegistered, getUsers, getUserVerified } from '../store/action';
 
 const Home = () => {
+  const { dapils } = useSelector((state) => state.dapil)
+  const { parpols } = useSelector((state) => state.parpol)
+  const { register, verified } = useSelector((state) => state.user)
+
+  const dispatch = useDispatch();
+
+
+  useEffect(() => {
+    dispatch(getCalegLogin());
+    dispatch(getParpols());
+    dispatch(getDapils());
+    dispatch(getUsers());
+    dispatch(getUserRegistered());
+    dispatch(getUserVerified());
+  },[])
     return (
         <React.Fragment>
              <div className="content-wrapper">
@@ -15,7 +32,7 @@ const Home = () => {
                     <div className="col-sm-6">
                     <ol className="breadcrumb float-sm-right">
                         <li className="breadcrumb-item"><NavLink to="/dashboard">Home</NavLink></li>
-                        <li className="breadcrumb-item active">Dashboard KPU</li>
+                        <li className="breadcrumb-item active">Dashboard</li>
                     </ol>
                     </div>{/* /.col */}
                 </div>{/* /.row */}
@@ -27,11 +44,11 @@ const Home = () => {
                 <div className="container-fluid">
                 {/* Small boxes (Stat box) */}
                 <div className="row">
-                    <div className="col-lg-3 col-6">
+                    <div className="col-lg-4 col-6">
                     {/* small box */}
                     <div className="small-box bg-info">
                         <div className="inner">
-                        <h3>14</h3>
+                        <h3>{parpols.length}</h3>
                         <p>Total Partai Terdaftar</p>
                         </div>
                         <div className="icon">
@@ -41,25 +58,25 @@ const Home = () => {
                     </div>
                     </div>
                     {/* ./col */}
-                    <div className="col-lg-3 col-6">
+                    <div className="col-lg-4 col-6">
                     {/* small box */}
                     <div className="small-box bg-success">
                         <div className="inner">
-                        <h3>153</h3>
+                        <h3>{verified.length}</h3>
                         <p>Bakal Calon Legislatif</p>
                         </div>
                         <div className="icon">
-                        <i className="ion ion-stats-bars" />
+                        <i className="ion ion-person" />
                         </div>
                         <Link to="#" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></Link>
                     </div>
                     </div>
                     {/* ./col */}
-                    <div className="col-lg-3 col-6">
+                    <div className="col-lg-4 col-6">
                     {/* small box */}
-                    <div className="small-box bg-warning">
+                    <div className="small-box bg-danger">
                         <div className="inner">
-                        <h3>44</h3>
+                        <h3>{register.length}</h3>
                         <p>User Registrasi</p>
                         </div>
                         <div className="icon">
@@ -69,19 +86,7 @@ const Home = () => {
                     </div>
                     </div>
                     {/* ./col */}
-                    <div className="col-lg-3 col-6">
-                    {/* small box */}
-                    <div className="small-box bg-danger">
-                        <div className="inner">
-                        <h3>10</h3>
-                        <p>Pengaduan</p>
-                        </div>
-                        <div className="icon">
-                        <i className="ion ion-chatbubbles" />
-                        </div>
-                        <Link to="#" className="small-box-footer">More info <i className="fas fa-arrow-circle-right" /></Link>
-                    </div>
-                    </div>
+                   
                     {/* ./col */}
                 </div>
                 {/* /.row */}

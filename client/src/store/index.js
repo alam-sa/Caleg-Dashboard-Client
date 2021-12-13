@@ -8,9 +8,11 @@ import userReducer from './reducers/user'
 import parpolReducer from './reducers/parpol'
 import dapilReducer from './reducers/dapil'
 import statusReducer from './reducers/status'
+import dokumenReducer from './reducers/dokumen'
 
 const reducers = combineReducers({
   caleg: calegReducer,
+  dokumen: dokumenReducer,
   region: regionReducer,
   auth: authReducer,
   user: userReducer,

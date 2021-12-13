@@ -16,7 +16,7 @@ const DaftarCaleg = () => {
                     </div>{/* /.col */}
                     <div className="col-sm-6">
                     <ol className="breadcrumb float-sm-right">
-                        <li className="breadcrumb-item"><NavLink to="/dashboard">Calon</NavLink></li>
+                        <li className="breadcrumb-item"><NavLink to="/dashboard">Home</NavLink></li>
                         <li className="breadcrumb-item active">Caleg</li>
                     </ol>
                     </div>

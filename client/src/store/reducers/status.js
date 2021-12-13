@@ -4,7 +4,6 @@ const initialState = {
 
 function reducer(state = initialState, action) {
   const { type, payload } = action
-  console.log(payload);
   switch (type) {
     case 'STATUS/UPDATESTATUS':
       return { ...state, status: payload }

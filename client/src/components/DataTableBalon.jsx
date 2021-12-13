@@ -3,25 +3,35 @@ import DataTable, { memoize } from 'react-data-table-component';
 import moment from 'moment'
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { getCaleg } from "../store/action";
+import { getUserRegistered } from "../store/action";
 
 var idLocale = require('moment/locale/id'); 
 moment.locale('id', idLocale);
 
 
 const columns = [
+  {
+    name: 'FOTO',
+    width: '12rem',
+    cell: (data) => <React.Fragment>
+    {data.foto_profil ?
+        <img className='mx-1' src={data.foto_profil} width="50" height="50" alt="" />
+    : 
+        <img className='mx-1' src={'avatar.jpg'} width="50" height="50" alt="Foto" />
+    }
+    </React.Fragment> ,
+    ignoreRowClick: false,
+    allowOverflow: true,
+    button: true,
+},
     {
-        name: 'Foto',
-        selector: row => row.nama
-    },
-    {
-        name: 'Tanggal Daftar',
+        name: 'TANGGAL DAFTAR',
         selector: row => `${moment(row.createdAt).format("dddd")}, ${moment(row.createdAt).format("DD/MM/YYYY")}`,
         sortable: true,
     },
     {
-        name: 'NIK',
-        selector: row => row.NIK,
+        name: 'DAPIL',
+        selector: row => row.Dapil.nama_dapil,
         sortable: true,
     },
     {
@@ -31,6 +41,7 @@ const columns = [
     },
     {
       name: 'Asal Partai',
+      width: '20rem',
       selector: row => row.Partai.nama_partai,
       sortable: true,
     },
@@ -38,12 +49,6 @@ const columns = [
         name: 'Status',
         selector: row => row.StatusCaleg.nama_status,
         sortable: true,
-    },
-    {
-        cell: (data) => <button className='btn btn-sm btn-info'><i className='fas fa-info mr-1'></i><Link to="/detail" state={{data: data}} ProfilCalon style={{color: '#fff'}} className="link-success">Detail</Link></button> ,
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true,
     }
 ];
 
@@ -51,17 +56,17 @@ const columns = [
 const TableBalon = () => {
     const [tableData, setTableData] = useState([])
 
-    const { calegs, loading } = useSelector(state => state.caleg)
+    const { register } = useSelector(state => state.user)
 
     const dispatch = useDispatch();
 
     useEffect(() => {
-        dispatch(getCaleg(1))
+        dispatch(getUserRegistered())
     }, [])
 
     useEffect(() => {
-       setTableData(calegs)
-    }, [calegs])
+       setTableData(register)
+    }, [register])
 
     useEffect(() => {
 
@@ -71,14 +76,14 @@ console.log(tableData);
 
     function filteredItems(data, filterText) {
         return data.filter((item) => {
-            return  item.title && item.title.toLowerCase().includes(filterText.toLowerCase()) || item.partai && item.partai.toLowerCase().includes(filterText.toLowerCase())
+            return  item.nama && item.nama.toLowerCase().includes(filterText.toLowerCase()) || item.Dapil.nama_dapil && item.Dapil.nama_dapil.toLowerCase().includes(filterText.toLowerCase()) || item.Partai.nama_partai && item.Partai.nama_partai.toLowerCase().includes(filterText.toLowerCase())
         })
     }
     function filter(event) {
         if (event === '') {
-            setTableData(calegs)
+            setTableData(register)
         } else {
-            setTableData(filteredItems(calegs, event))
+            setTableData(filteredItems(register, event))
         }
     }
     
@@ -93,12 +98,21 @@ console.log(tableData);
                     </div>
                 </div>
             </div>
-            <DataTable
-                columns={columns}
-                data={tableData}
-                pagination
-                highlightOnHover
-            />
+            {/* {
+              register ? */}
+              <DataTable
+                  columns={columns}
+                  data={tableData}
+                  pagination
+                  highlightOnHover
+                  persistTableHead={true}
+                  dense={true}
+              /> 
+              {/* :
+              <div>
+                <p>No Data</p>
+              </div>
+            } */}
         </React.Fragment>
     );
 };

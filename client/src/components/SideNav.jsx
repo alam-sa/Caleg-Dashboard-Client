@@ -1,7 +1,10 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
+import { useSelector } from 'react-redux'
 
 const SideNav = () => {
+  const {caleg} = useSelector((state) => state.caleg)
+
   function logout() {
         localStorage.clear();
   }
@@ -15,6 +18,15 @@ const SideNav = () => {
             </NavLink>
             {/* Sidebar */}
             <div className="sidebar">
+            <div className="user-panel mt-3 pb-3 mb-3 d-flex">
+              <div className="image">
+                <img src={caleg.foto_profil} className="img-circle elevation-2" alt="User Image" />
+              </div>
+              <div className="info">
+                <NavLink to="#" className="d-block" style={{fontSize: "12px"}}>{caleg.nama}</NavLink>
+              </div>
+            </div>
+
                 {/* Sidebar Menu */}
                 <nav className="mt-2">
                 <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">

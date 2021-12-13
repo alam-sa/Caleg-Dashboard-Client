@@ -9,9 +9,18 @@ export function setAuth(payload) {
 export function setStatus(payload) {
   return { type: 'STATUS/UPDATESTATUS', payload }
 }
-// PROVINCES
+
+// REGION
 export function setProvinces(payload) {
   return { type: 'REGION/ADDPROVINCES', payload }
+}
+
+export function setDistricts(payload) {
+  return { type: 'REGION/ADDDISTRICTS', payload }
+}
+
+export function setSubdistricts(payload) {
+  return { type: 'REGION/ADDSUBDISTRICTS', payload }
 }
 
 export function setLoadingProvinces(payload) {
@@ -30,9 +39,18 @@ export function setCalegLogin(payload) {
   return { type: 'CALEG/ADDCALEG', payload }
 }
 
-// ADMIN KPU
+// USER
 export function setUsers(payload) {
   return { type: 'USER/ADDUSERLIST', payload }
+}
+
+
+export function setUserRegistered(payload) {
+  return { type: 'USER/ADDUSERREGISTER', payload }
+}
+
+export function setUserVerified(payload) {
+  return { type: 'USER/ADDUSERVERIFIED', payload }
 }
 
 export function setLoadingUsers(payload) {
@@ -63,65 +81,74 @@ export function setLoadingDapils(payload) {
   return { type: 'LOADING/CHANGELOADINGDAPILS', payload }
 }
 
-// export function setLoadingMovie(payload) {
-//   return { type: 'LOADING/CHANGELOADINGMOVIE', payload }
-// }
+// DOKUMEN
+export function setDokumen(payload) {
+  return { type: 'DOKUMEN/ADDDOKUMENCALEG', payload }
+}
 
-// export function addFavoriteBook(payload) {
-//   return { type: 'FAVORITES/ADDFAVORITEBOOK', payload }
-// }
+export function setLoadingDokumen(payload) {
+  return { type: 'LOADING/CHANGELOADINGDOKUMEN', payload }
+}
 
-// export function addFavoriteMovie(payload) {
-//   return { type: 'FAVORITES/ADDFAVORITEMOVIE', payload }
-// }
+// REGION
+export function getProvinces() {
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingProvinces(true));
+      await axios({
+        url: `/provinces`,
+        method: 'GET',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+      .then(({data}) => {
+        data = data.map( (data, index) => {
+          return { value: index + 1, label: data }
+        })
+        dispatch(setProvinces(data));
+        dispatch(setLoadingProvinces(false));
+      }).catch(err => {
+        dispatch(setLoadingProvinces(false));
+        console.log(err);
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  }
+}
+export function getDistricts(region, data) {
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingProvinces(true));
+      await axios({
+        url: `/region?${region}=${data}`,
+        method: 'GET',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+      .then(({data}) => {
+        data = data.map( (data, index) => {
+          return { value: index + 1, label: data }
+        })
+        if (region === 'province') {
+          dispatch(setDistricts(data));
+        } else {
+          dispatch(setSubdistricts(data));
+        }
+        dispatch(setLoadingProvinces(false));
+      }).catch(err => {
+        dispatch(setLoadingProvinces(false));
+        console.log(err);
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  }
+}
 
 // CALEG
-// export function registerCaleg(payload) { 
-//   return async (dispatch) => {
-//     try {
-    //   await axios({
-    //     url: `caleg/register`,
-    //     method: 'POST',
-    //     data: payload
-    //   })
-    //   .then(({data}) => {
-    //     console.log(data);
-    //     toast.success(`Akun telah berhasil dibuat`, {
-    //       position: "top-center",
-    //       autoClose: 5000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //     });
-
-    //   }).catch(err => {
-    //     console.log(err);
-    //     toast.error("Registrasi Gagal!", {
-    //       position: "top-center",
-    //       autoClose: 5000,
-    //       hideProgressBar: false,
-    //       closeOnClick: true,
-    //       pauseOnHover: true,
-    //       draggable: true,
-    //       progress: undefined,
-    //     }); 
-    //   })
-    // } catch(err) {
-    //   console.log(err);
-    //   toast.error("Registrasi Gagal!", {
-    //     position: "top-center",
-    //     autoClose: 5000,
-    //     hideProgressBar: false,
-    //     closeOnClick: true,
-    //     pauseOnHover: true,
-    //     draggable: true,
-    //     progress: undefined,
-    //   }); 
-    // }
-//   }
-// }
 export function getCalegLogin() { 
   return async (dispatch) => {
     try {
@@ -134,14 +161,44 @@ export function getCalegLogin() {
         }
       })
       .then((res) => {
+        res.data.provinsi = JSON.parse(res.data.provinsi);
+        res.data.kabupaten = JSON.parse(res.data.kabupaten);
+        res.data.kecamatan = JSON.parse(res.data.kecamatan);
         dispatch(setCalegLogin(res.data));
-        dispatch(setDapil(res.data.Dapil))
+        dispatch(setDapil(res.data.Dapil));
         dispatch(setParpol(res.data.Partai));
-        dispatch(setStatus(res.data.StatusCaleg))
+        dispatch(setStatus(res.data.StatusCaleg));
+        dispatch(setDokumen(res.data.Dokumen));
         dispatch(setLoadingCaleg(false));
       }).catch(err => {
         dispatch(setLoadingCaleg(false));
         console.log(err);
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  }
+}
+
+export function getUsers() { 
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingUsers(true))
+      await axios({
+        url: `caleg/all`,
+        method: 'GET',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+      .then((res) => {
+        if (res.data) {
+          dispatch(setUsers(res.data))
+        }
+        dispatch(setLoadingUsers(false))
+      }).catch(err => {
+        console.log(err);
+        dispatch(setLoadingUsers(false))
       })
     } catch(err) {
       console.log(err);
@@ -154,7 +211,7 @@ export function getCaleg(id) {
     try {
       dispatch(setLoadingCaleg(true));
       await axios({
-        url: `caleg/${id}`,
+        url: `caleg/data/${id}`,
         method: 'GET',
         headers: {
           access_token: localStorage.getItem('access_token')
@@ -175,159 +232,248 @@ export function getCaleg(id) {
 }
 
 
-
-// ADMIN KPU
-export function getUsers() { 
+// REGISTERED USER (CALEG)
+export function getUserRegistered() { 
   return async (dispatch) => {
     try {
-      dispatch(setLoadingUsers(true))
+      dispatch(setLoadingUsers(true));
       await axios({
-        url: `user`,
+        url: `caleg/filter/1`,
         method: 'GET',
         headers: {
           access_token: localStorage.getItem('access_token')
         }
       })
       .then((res) => {
-        dispatch(setUsers(res.data))
-        dispatch(setLoadingUsers(false))
+        if (res.data) {
+          dispatch(setUserRegistered(res.data));
+        }
+        dispatch(setLoadingUsers(false));
       }).catch(err => {
         console.log(err);
-        dispatch(setLoadingUsers(false))
+        dispatch(setLoadingUsers(false));
       })
     } catch(err) {
       console.log(err);
+      dispatch(setLoadingCaleg(false));
     }
   }
 }
 
-export function updateActiveUser(id, payload) { 
-  console.log(payload);
-  const is_active = payload
+export function getUserVerified() { 
   return async (dispatch) => {
     try {
-      dispatch(setLoadingUsers(true))
+      dispatch(setLoadingUsers(true));
       await axios({
-        url: `user/status/${id}`,
+        url: `caleg/filter/4`,
+        method: 'GET',
+        headers: {
+          access_token: localStorage.getItem('access_token')
+        }
+      })
+      .then((res) => {
+        console.log(res.data, ">>>>>>>>>><<<<<<<<<<<");
+        if (res.data) {
+          dispatch(setUserVerified(res.data));
+        }
+        dispatch(setLoadingUsers(false));
+      }).catch(err => {
+        console.log(err);
+        dispatch(setLoadingUsers(false));
+      })
+    } catch(err) {
+      console.log(err);
+      dispatch(setLoadingCaleg(false));
+    }
+  }
+}
+
+// update status caleg
+export function updateStatusCaleg(id, payload) { 
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingCaleg(true));
+      await axios({
+        url: `caleg/status/${id}`,
         method: 'PATCH',
-        data: {is_active},
+        data: {status: +payload},
         headers: {
           access_token: localStorage.getItem('access_token')
         }
       })
       .then((res) => {
-        dispatch(getUsers())
-        dispatch(setLoadingUsers(false))
-        toast.success(res.data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
+        console.log(res.data);
+        // dispatch(setCaleg(res.data));
+        dispatch(setLoadingCaleg(false));
       }).catch(err => {
         console.log(err);
-        dispatch(setLoadingUsers(false))
-        toast.error(err.response.data.message[0], {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
+        dispatch(setLoadingCaleg(false));
       })
     } catch(err) {
       console.log(err);
+      dispatch(setLoadingCaleg(false));
     }
   }
 }
-export function addUser(payload) { 
-  return async (dispatch) => {
-    try {
-      dispatch(setLoadingUsers(true))
-      await axios({
-        url: `user/addadmin`,
-        method: 'POST',
-        data: payload,
-        headers: {
-          access_token: localStorage.getItem('access_token')
-        }
-      })
-      .then((res) => {
-        dispatch(setLoadingUsers(false))
-        dispatch(getUsers())
-        toast.success(res.data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
-      }).catch(err => {
-        console.log(err);
-        dispatch(setLoadingUsers(false))
-        toast.error(err.response.data.message[0], {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
-      })
-    } catch(err) {
-      console.log(err);
-    }
-  }
-}
-export function deleteUser(id) { 
-  return async (dispatch) => {
-    try {
-      dispatch(setLoadingUsers(true))
-      await axios({
-        url: `user/${id}`,
-        method: 'DELETE',
-        headers: {
-          access_token: localStorage.getItem('access_token')
-        }
-      })
-      .then((res) => {
-        dispatch(setLoadingUsers(false))
-        dispatch(getUsers())
-        toast.success(res.data.message, {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
-      }).catch(err => {
-        console.log(err);
-        dispatch(setLoadingUsers(false))
-        toast.error(err.response.data.message[0], {
-          position: "top-center",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-          progress: undefined,
-      });
-      })
-    } catch(err) {
-      console.log(err);
-    }
-  }
-}
+
+
+
+
+
+// // ADMIN KPU
+// export function getUsers() { 
+//   return async (dispatch) => {
+//     try {
+//       dispatch(setLoadingUsers(true))
+//       await axios({
+//         url: `caleg`,
+//         method: 'GET',
+//         headers: {
+//           access_token: localStorage.getItem('access_token')
+//         }
+//       })
+//       .then((res) => {
+//         if (res.data) {
+//           dispatch(setUsers(res.data))
+//         }
+//         dispatch(setLoadingUsers(false))
+//       }).catch(err => {
+//         console.log(err);
+//         dispatch(setLoadingUsers(false))
+//       })
+//     } catch(err) {
+//       console.log(err);
+//     }
+//   }
+// }
+
+// export function updateActiveUser(id, payload) { 
+//   console.log(payload);
+//   const is_active = payload
+//   return async (dispatch) => {
+//     try {
+//       dispatch(setLoadingUsers(true))
+//       await axios({
+//         url: `user/status/${id}`,
+//         method: 'PATCH',
+//         data: {is_active},
+//         headers: {
+//           access_token: localStorage.getItem('access_token')
+//         }
+//       })
+//       .then((res) => {
+//         dispatch(getUsers())
+//         dispatch(setLoadingUsers(false))
+//         toast.success(res.data.message, {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//       });
+//       }).catch(err => {
+//         console.log(err);
+//         dispatch(setLoadingUsers(false))
+//         toast.error(err.response.data.message[0], {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//         });
+//       })
+//     } catch(err) {
+//       console.log(err);
+//     }
+//   }
+// }
+// export function addUser(payload) { 
+//   return async (dispatch) => {
+//     try {
+//       dispatch(setLoadingUsers(true))
+//       await axios({
+//         url: `user/addadmin`,
+//         method: 'POST',
+//         data: payload,
+//         headers: {
+//           access_token: localStorage.getItem('access_token')
+//         }
+//       })
+//       .then((res) => {
+//         dispatch(setLoadingUsers(false))
+//         dispatch(getUsers())
+//         toast.success(res.data.message, {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//       });
+//       }).catch(err => {
+//         console.log(err);
+//         dispatch(setLoadingUsers(false))
+//         toast.error(err.response.data.message[0], {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//       });
+//       })
+//     } catch(err) {
+//       console.log(err);
+//     }
+//   }
+// }
+// export function deleteUser(id) { 
+//   return async (dispatch) => {
+//     try {
+//       dispatch(setLoadingUsers(true))
+//       await axios({
+//         url: `user/${id}`,
+//         method: 'DELETE',
+//         headers: {
+//           access_token: localStorage.getItem('access_token')
+//         }
+//       })
+//       .then((res) => {
+//         dispatch(setLoadingUsers(false))
+//         dispatch(getUsers())
+//         toast.success(res.data.message, {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//       });
+//       }).catch(err => {
+//         console.log(err);
+//         dispatch(setLoadingUsers(false))
+//         toast.error(err.response.data.message[0], {
+//           position: "top-center",
+//           autoClose: 5000,
+//           hideProgressBar: false,
+//           closeOnClick: true,
+//           pauseOnHover: true,
+//           draggable: true,
+//           progress: undefined,
+//       });
+//       })
+//     } catch(err) {
+//       console.log(err);
+//     }
+//   }
+// }
 
 // PARPOL
 export function getParpols() { 
@@ -339,7 +485,6 @@ export function getParpols() {
         method: 'GET'
       })
       .then(({data}) => {
-        console.log(data);
         data = data.map(data => {
           return { value: data.id, label: data.nama_partai }
        })
@@ -407,7 +552,6 @@ export function getDapils() {
         method: 'GET'
       })
       .then(({data}) => {
-        console.log(data);
         data = data.map(data => {
           return { value: data.id, label: data.nama_dapil }
        })
@@ -423,19 +567,23 @@ export function getDapils() {
   }
 }
 
-// export function fetchMovie() {
-  // return async (dispatch) => {
-  //   try {
-  //     const response = await fetch('https://the-one-api.dev/v2/movie', { headers: { "authorization": process.env.REACT_APP_API_KEY }})
-  //     const data = await response.json()
-  //     dispatch(setMovies(data.docs))
-  //     dispatch(setLoadingMovie(false))
-  //   } catch(err) {
-  //     swal({
-  //       title: "Error!",
-  //       text: `${err.message}`,
-  //       icon: "error",
-  //     });
-  //   }
-  // }
-// }
+export function getDokumen(id) { 
+  return async (dispatch) => {
+    try {
+      dispatch(setLoadingDokumen(true))
+      await axios({
+        url: `dokumen/${id}`,
+        method: 'GET'
+      })
+      .then(({data}) => {
+        dispatch(setDokumen(data))
+        dispatch(setLoadingDokumen(false))
+      }).catch(err => {
+        console.log(err);
+        dispatch(setLoadingDokumen(false))
+      })
+    } catch(err) {
+      console.log(err);
+    }
+  }
+}

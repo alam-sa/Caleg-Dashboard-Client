@@ -1,80 +1,78 @@
 import React, { useEffect, useState } from "react";
 import DataTable, { memoize } from 'react-data-table-component';
-import { Link, useLocation } from "react-router-dom";
+import moment from 'moment'
+import { useDispatch, useSelector } from "react-redux";
+import { Link } from "react-router-dom";
+import { getUserVerified } from "../store/action";
+
+var idLocale = require('moment/locale/id'); 
+moment.locale('id', idLocale);
+
 
 const columns = [
     {
-        name: 'Foto',
-        selector: row => row.year
+        name: 'FOTO',
+        width: '12rem',
+        cell: (data) => <React.Fragment>
+        {data.foto_profil ?
+            <img className='mx-1' src={data.foto_profil} width="50" height="50" alt="" />
+        : 
+            <img className='mx-1' src={'avatar.jpg'} width="50" height="50" alt="Foto" />
+        }
+        </React.Fragment> ,
+        ignoreRowClick: false,
+        allowOverflow: true,
+        button: true,
     },
     {
-        name: 'Tanggal Daftar',
-        selector: row => row.year,
+        name: 'TANGGAL DAFTAR',
+        selector: row => `${moment(row.createdAt).format("dddd")}, ${moment(row.createdAt).format("DD/MM/YYYY")}`,
         sortable: true,
     },
     {
-        name: 'NIK',
-        selector: row => row.year,
+        name: 'DAPIL',
+        selector: row => row.Dapil.nama_dapil,
         sortable: true,
     },
     {
-        name: 'Nama Calon',
-        selector: row => row.title,
+        name: 'NAMA CALON',
+        selector: row => row.nama,
         sortable: true,
     },
     {
-      name: 'Asal Partai',
-      selector: row => row.partai,
+      name: 'ASAL PARTAI',
+      width: '20rem',
+      selector: row => row.Partai.nama_partai,
       sortable: true,
     },
     {
-        name: 'Validasi',
-        selector: row => row.year,
+        name: 'STATUS',
+        selector: row => row.StatusCaleg.nama_status,
         sortable: true,
-    },
-    {
-        cell: (data) => <button className='btn btn-sm btn-info'><i className='fas fa-info mr-1'></i><Link to="/detail" state={{data: data}} style={{color: '#fff'}} className="link-success">Detail</Link></button> ,
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true,
-    },
-    {
-        cell: (data) => <button className='btn btn-sm btn-success'><i className='fas fa-edit mr-1'></i><Link to={{pathname: `/verifikasi/${data.id}`, state: data}} style={{color: '#fff'}} className="link-success">Verifikasi</Link></button> ,
-        ignoreRowClick: true,
-        allowOverflow: true,
-        button: true,
-    },
+    }
 ];
 
-const data = [
-    {
-        id: 1,
-        title: 'Beetlejuice',
-        partai: 'PDI Perjuangan',
-        year: '1988',
-    },
-    {
-        id: 2,
-        title: 'Ghostbusters',
-        partai: 'Gerindra',
-        year: '1984',
-    },
-]
 
-const Table = () => {
-    const [fetchData, setFetchData] = useState(data)
+const TableCaleg = () => {
     const [tableData, setTableData] = useState([])
 
-    const location = useLocation()
+    const { verified, loading } = useSelector(state => state.user)
 
+    const dispatch = useDispatch();
 
-useEffect(() => {
-    setTableData(fetchData)
-}, [])
+    useEffect(() => {
+        dispatch(getUserVerified())
+    }, [])
 
-useEffect(() => {
+    useEffect(() => {
+       setTableData(verified)
+    }, [verified])
+
+    useEffect(() => {
 
 },[tableData])
+
+console.log(tableData);
 
     function filteredItems(data, filterText) {
         return data.filter((item) => {
@@ -83,9 +81,9 @@ useEffect(() => {
     }
     function filter(event) {
         if (event === '') {
-            setTableData(fetchData)
+            setTableData(verified)
         } else {
-            setTableData(filteredItems(fetchData, event))
+            setTableData(filteredItems(verified, event))
         }
     }
     
@@ -100,14 +98,23 @@ useEffect(() => {
                     </div>
                 </div>
             </div>
-            <DataTable
-                columns={columns}
-                data={tableData}
-                pagination
-                highlightOnHover
-            />
+            {/* {
+              verified ? */}
+              <DataTable
+                  columns={columns}
+                  data={tableData}
+                  pagination
+                  highlightOnHover
+                  persistTableHead={true}
+                  dense={true}
+              /> 
+               {/* :
+               <div>
+                 <p>No Data</p>
+               </div>
+             } */}
         </React.Fragment>
     );
 };
 
-export default Table
+export default TableCaleg
