@@ -238,7 +238,7 @@ export function getUserRegistered() {
     try {
       dispatch(setLoadingUsers(true));
       await axios({
-        url: `caleg/filter/1`,
+        url: `caleg/filter/register`,
         method: 'GET',
         headers: {
           access_token: localStorage.getItem('access_token')
@@ -265,7 +265,7 @@ export function getUserVerified() {
     try {
       dispatch(setLoadingUsers(true));
       await axios({
-        url: `caleg/filter/4`,
+        url: `caleg/filter/verified`,
         method: 'GET',
         headers: {
           access_token: localStorage.getItem('access_token')

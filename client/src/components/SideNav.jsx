@@ -20,7 +20,7 @@ const SideNav = () => {
             <div className="sidebar">
             <div className="user-panel mt-3 pb-3 mb-3 d-flex">
               <div className="image">
-                <img src={caleg.foto_profil} className="img-circle elevation-2" alt="User Image" />
+                <img src={caleg.foto_profil ? `${caleg.foto_profil}` : 'avatar.jpg' } className='mx-1' width="50" height="50" alt="img" />
               </div>
               <div className="info">
                 <NavLink to="#" className="d-block" style={{fontSize: "12px"}}>{caleg.nama}</NavLink>

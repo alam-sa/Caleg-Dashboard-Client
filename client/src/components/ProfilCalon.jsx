@@ -15,7 +15,7 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
   const { dapils } = useSelector((state) => state.dapil);
   const { parpols } = useSelector((state) => state.parpol);
   
-  const [value, onChange] = useState(new Date())
+  const [value, onChange] = useState(caleg.tanggal_lahir)
   const [profil, setProfil] = useState({
     nama: caleg.nama,
     NIK: caleg.NIK,
@@ -24,7 +24,7 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
     dapil: { value: caleg.dapilId, label: dapil.nama_dapil },
     email: caleg.email,
     tempat_lahir: caleg.tempat_lahir,
-    agama: caleg.agama,
+    agama: { value: caleg.agama, label: caleg.agama },
     dapilId: caleg.dapilId,
     partaiId:caleg.partaiId,
     noHp: caleg.noHp,
@@ -33,6 +33,15 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
     kecamatan: caleg.kecamatan,
     alamat: caleg.alamat
   })
+
+  const religion = [
+    {label: 'ISLAM', value: 'ISLAM'},
+    {label: 'PROTESTAN', value: 'PROTESTAN'},
+    {label: 'KATOLIK', value: 'KATOLIK'},
+    {label: 'HINDU', value: 'HINDU'},
+    {label: 'BUDDHA', value: 'BUDDHA'},
+    {label: 'KHONGHUCU', value: 'KHONGHUCU'},
+  ]
 
 
   const dispatch = useDispatch();
@@ -83,6 +92,14 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
     })
   }
 
+  function handleSelectReligion(selectedReligion) {
+    setProfil({
+      ...profil,
+      agama: {label: selectedReligion.value, value: selectedReligion.value}
+    })
+    // console.log(selectedReligion);
+  }
+
   function handleUploadFoto(event) {
     event.preventDefault();
     const image = event.target.files[0]
@@ -108,12 +125,13 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
   function handleSubmit(event) {
     event.preventDefault()
     const payload = {
-      nama: caleg.nama,
+      nama: profil.nama,
       NIK: profil.NIK,
       foto_profil: profil.foto_profil,
       email: profil.email,
       tempat_lahir: profil.tempat_lahir,
-      agama: profil.agama,
+      tanggal_lahir: value,
+      agama: profil.agama.value,
       dapilId: profil.dapilId,
       partaiId:profil.partaiId,
       noHp: profil.noHp,
@@ -122,6 +140,7 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
       kecamatan: JSON.stringify(profil.kecamatan),
       alamat: profil.alamat
     }
+    console.log(payload);
     axios({
       url: `caleg/profil`,
       method: 'PATCH',
@@ -158,7 +177,7 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
                       <div className='p-4 text-muted card mb-0 '>
                           <div className="d-flex ">
                               <div className='card mb-0' style={{width:"150px", height:"150px", minWidth:'150px'}}>
-                                  <input type="file" className='d-none' id='logo' onChange={(e) => handleUploadFoto(e)} />
+                                  <input type="file" className='d-none' id='logo' accept="image/png, image/jpg, image/jpeg" onChange={(e) => handleUploadFoto(e)} />
                                       <img src={profil.foto_profil ? `${profil.foto_profil}` : "avatar.jpg"} height="150px"  width="150px" alt="" htmlFor={'logo'} />
                                   
                               </div>
@@ -191,7 +210,18 @@ const ProfilCalon = ({loading, caleg, dapil, parpol}) => {
                               maxDate={new Date()}
                               />
                               <label htmlFor="religion">Agama</label>
-                              <input type="text" name="agama" onChange={(e) => setProfil({...profil, agama: e.target.value})} className="form-control mb-3" id="religion" value={profil.agama} />
+                              <Select
+                                  name="agama"
+                                  closeMenuOnSelect={true}
+                                  hideSelectedOptions={false}
+                                  options={religion}
+                                  value={profil.agama}
+                                  className="mb-3"
+                                  classNamePrefix="select"
+                                  placeholder={'Pilih Agama'}
+                                  onChange={handleSelectReligion}
+                              />
+                              {/* <input type="text" name="agama" onChange={(e) => setProfil({...profil, agama: e.target.value})} className="form-control mb-3" id="religion" value={profil.agama} /> */}
                               <label htmlFor="dapil">Daerah Pemilihan</label>
                               {/* <input type="text" className="form-control mb-3" id="dapil" value={profil.dapil} /> */}
                               <Select

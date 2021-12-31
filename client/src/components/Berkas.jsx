@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Link } from "react-router-dom";
 import { getCalegLogin, getDokumen, setLoadingCaleg, setStatus, updateStatusCaleg } from '../store/action';
 import axios from '../api/config';
 import { toast } from 'react-toastify';
-
 
 const Berkas = ({caleg}) => {
 
@@ -36,7 +36,7 @@ const Berkas = ({caleg}) => {
 const dispatch = useDispatch();
 
 useEffect(() => {
-  dispatch(getDokumen(caleg.dokumenId))
+  // dispatch(getDokumen(caleg.dokumenId))
 },[])
 
 function uploadDokumen(event) {
@@ -47,9 +47,9 @@ function uploadDokumen(event) {
   })
   let selectedFile = event.target.files[0]
   const formData = new FormData();
-  formData.append('dokumen', selectedFile);
+  formData.append('berkas', selectedFile);
   axios({
-    url: `dokumen/upload`,
+    url: `berkas/upload`,
     method: 'POST',
     data: formData,
     headers: {
@@ -70,9 +70,9 @@ function uploadDokumen(event) {
 
 function handleSubmit(event) {
   event.preventDefault()
-  if (legal.ktp && legal.ktp && legal.bb1 && legal.bb2 && legal.ijazah && legal.suket_sehat && legal.suket_kpu && legal.skck && legal.kta_parpol && legal.dokumen_lainnya) {
+  if (legal.ktp && legal.bb1 && legal.bb2 && legal.ijazah && legal.suket_sehat && legal.suket_kpu && legal.skck && legal.kta_parpol && legal.dokumen_lainnya) {
     axios({
-      url: `dokumen/caleg/${caleg.dokumenId}`,
+      url: `berkas/caleg/${caleg.dokumenId}`,
       method: 'PATCH',
       data: legal,
       headers: {
@@ -131,20 +131,18 @@ function handleSubmit(event) {
                               
                               <div className='d-flex flex-column ml-3'>
                               <div className='card mb-0' style={{width:"150px", height:"150px", minWidth:'150px'}}>
-                                  <input type="file" className='d-none' id='logo' />
+                                  <input type="file" accept="application/pdf" className='d-none' id='logo' />
                                       <img src={"pdf.png"} height="150px"  width="150px" alt="" htmlFor={'logo'} />
                               </div>
-                                  <label className='btn w-10 mt-3 btn-success' htmlFor='logo'>download BB.1
-                                  </label>
+                                  <Link to="/files/FormulirBB1.pdf" className='btn w-10 mt-3 btn-success' target="_blank" download>download BB.1</Link>
                               </div>
 
                               <div className='d-flex flex-column ml-3'>
                               <div className='card mb-0' style={{width:"150px", height:"150px", minWidth:'150px'}}>
-                                  <input type="file" className='d-none' id='logo' />
+                                  <input type="file" accept="application/pdf" className='d-none' id='logo' />
                                       <img src={"pdf.png"} height="150px"  width="150px" alt="" htmlFor={'logo'} />
                               </div>
-                                  <label className='btn w-10 mt-3 btn-success' htmlFor='logo'>download BB.2
-                                  </label>
+                              <Link to="/files/FormulirBB2.pdf" className='btn w-10 mt-3 btn-success' target="_blank" download>download BB.2</Link>
                               </div>
                           </div>
                       </div>
@@ -172,7 +170,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="ktp" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="ktp" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.ktp.name? label.ktp.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -186,7 +184,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Scan e-KTP</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="ktp" className={`custom-file-input ${label.ktp.name ? null : "is-invalid"} `} onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="ktp" className={`custom-file-input ${label.ktp.name ? null : "is-invalid"} `} onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.ktp.name? label.ktp.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: `${label.ktp.name ? "none" : "block" }`}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -227,7 +225,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="bb1" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="bb1" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.bb1.name? label.bb1.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -241,7 +239,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Formulir BB.1</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="bb1" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="bb1" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.bb1.name? label.bb1.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -283,7 +281,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="bb2" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="bb2" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.bb2.name? label.bb2.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -297,7 +295,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Formulir BB.2</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="bb2" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="bb2" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.bb2.name? label.bb2.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -339,7 +337,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="suket_sehat" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="suket_sehat" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.suket_sehat.name? label.suket_sehat.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -353,7 +351,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Surat Keterangan Sehat</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="suket_sehat" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="suket_sehat" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.suket_sehat.name? label.suket_sehat.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -395,7 +393,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="ijazah" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="ijazah" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.ijazah.name? label.ijazah.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -409,7 +407,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Scan Ijazah SMA</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="ijazah" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="ijazah" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.ijazah.name? label.ijazah.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -451,7 +449,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="suket_kpu" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="suket_kpu" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.suket_kpu.name? label.suket_kpu.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -465,7 +463,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Surat Keterangan KPU</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="suket_kpu" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="suket_kpu" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.suket_kpu.name? label.suket_kpu.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -507,7 +505,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="skck" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="skck" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.skck.name? label.skck.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -521,7 +519,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">SKCK</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="skck" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="skck" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.skck.name? label.skck.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -563,7 +561,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="kta_parpol" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="kta_parpol" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.kta_parpol.name? label.kta_parpol.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -577,7 +575,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">Scan KTA Parpol</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="kta_parpol" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="kta_parpol" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.kta_parpol.name? label.kta_parpol.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
@@ -619,7 +617,7 @@ function handleSubmit(event) {
                 (
                   <div className="input-group">
                     <div className="custom-file">
-                      <input type="file" name="dokumen_lainnya" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
+                      <input type="file" accept="application/pdf" name="dokumen_lainnya" className="custom-file-input" onChange={(e) => uploadDokumen(e)} />
                       <label className="custom-file-label" htmlFor="exampleInputFile" >{label.dokumen_lainnya.name? label.dokumen_lainnya.name : "Choose file"}</label>
                     </div>
                   </div>
@@ -633,7 +631,7 @@ function handleSubmit(event) {
                 <label htmlFor="exampleInputFile">File Pendukung Lainnya</label>
                 <div className="input-group">
                 <div className="custom-file">
-                  <input type="file" name="dokumen_lainnya" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
+                  <input type="file" accept="application/pdf" name="dokumen_lainnya" className="custom-file-input is-invalid" onChange={(e) => uploadDokumen(e)} />
                   <label className="custom-file-label" htmlFor="exampleInputFile" >{label.dokumen_lainnya.name? label.dokumen_lainnya.name : "Choose file"}</label>
                 </div>
                 <div className="invalid-feedback" style={{display: "block"}}>Dokumen anda tidak valid, upload dokumen valid.</div>
