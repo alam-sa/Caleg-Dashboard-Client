@@ -92,6 +92,9 @@ const SideNav = () => {
                 </nav>
                 {/* /.sidebar-menu */}
             </div>
+            <div className='d-flex justify-content-center'>
+                <h3 className='text-white font-weight-bolder m-4'>copywright © KPU</h3>
+            </div>
             {/* /.sidebar */}
             </aside>
 
